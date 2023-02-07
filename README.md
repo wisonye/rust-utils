@@ -8,6 +8,7 @@ This is my personal `Rust` utilities which contains the following modules:
 
     Logger util, it provides the following log functions:
 
+    - `LogLevel::get_config_from_env()`
     - `debug_log()`
     - `info_log()`
     - `warning_log()`
@@ -32,6 +33,13 @@ This is my personal `Rust` utilities which contains the following modules:
         "main",
         &format!("{service_name } is listening on: {listen_address}"),
     );
+    ```
+
+    </br>
+
+
+    ```bash
+    cargo test -- --nocapture
     ```
 
     </br>
