@@ -47,6 +47,43 @@ This is my personal `Rust` utilities which contains the following modules:
 
     </br>
 
+    Example:
+
+    ```rust
+    use crate::utils::memory;
+    use std::env;
+
+    #[derive(Debug)]
+    struct Color {
+        pub red: u8,
+        pub green: u8,
+        pub blue: u8,
+    }
+
+    let color = Color {
+        red: 0xAA,
+        green: 0xBB,
+        blue: 0xCC,
+    };
+    memory::print_memory_block(&color);
+
+    // [ "Memory" > "print_memory_block" ] - rust_utils::lib_tests::memory_tests::Color, size: 3 , block HEX: AABBCC
+
+
+    let memory_info = memory::get_memory_block_info(&color);
+    println!("{memory_info:#?}");
+
+    // MemoryBlockInfo {
+    //     type_name: "rust_utils::lib_tests::memory_tests::Color",
+    //     block_size: 3,
+    //     block_hex: "AABBCC",
+    // }
+    ```
+
+    </br>
+
+
+
 ## How to run test
 
 ```bash
