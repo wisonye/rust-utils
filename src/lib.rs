@@ -87,5 +87,20 @@ mod lib_tests {
             };
             memory::print_memory_block(&color);
         }
+
+        #[test]
+        fn should_get_memory_block_info() {
+            let color = Color {
+                red: 0xAA,
+                green: 0xBB,
+                blue: 0xCC,
+            };
+
+            let memory_info = memory::get_memory_block_info(&color);
+            println!("{memory_info:#?}");
+
+            assert_eq!(memory_info.block_size, 3);
+            assert_eq!(memory_info.block_hex, "AABBCC");
+        }
     }
 }
