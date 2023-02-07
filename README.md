@@ -38,9 +38,19 @@ This is my personal `Rust` utilities which contains the following modules:
     </br>
 
 
-    ```bash
-    cargo test -- --nocapture
-    ```
+- **`memory`**
+
+    Memory util, it provides the following functions:
+
+    - `print_memory_block`
+    - `get_memory_block_info`
 
     </br>
 
+## How to run test
+
+```bash
+cargo +nightly test -- --nocapture
+```
+
+</br>
