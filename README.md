@@ -83,6 +83,63 @@ This is my personal `Rust` utilities which contains the following modules:
     </br>
 
 
+- **`hex`**
+
+    Hex util, it provides the following functions:
+
+    - `byte_arr_to_hex_string`
+    - `hex_string_to_byte_arr`
+    - `hex_to_be_u16`
+    - `hex_to_be_u32`
+
+    </br>
+
+    Example:
+
+    - Get back hex string from byte array:
+
+        ```rust
+        let hex_arr = vec![0xAAu8, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF];
+        let hex_str = hex::byte_arr_to_hex_string(&hex_arr, None);
+        debug_log(
+            log_level,
+            HEX_LOGGER_NAME,
+            "byte_array_to_hex_string_should_work",
+            &format!("hex_str: {hex_str}"),
+        );
+        // [ "HexTests" > "byte_array_to_hex_string_should_work" ] - hex_str: AABBCCDDEEFF
+
+        let hex_str_with_space = hex::byte_arr_to_hex_string(&hex_arr, Some(' '));
+        debug_log(
+            log_level,
+            HEX_LOGGER_NAME,
+            "byte_array_to_hex_string_should_work",
+            &format!(">>> hex_str_with_space: '{hex_str_with_space}'"),
+        );
+        // [ "HexTests" > "byte_array_to_hex_string_should_work" ] - >>> hex_str_with_space: 'AA BB CC DD EE FF'
+        ```
+
+        </br>
+
+    - Get back byte array from hex string
+
+        ```rust
+        let hex_str = "0A1B2C3D4E5F";
+        let result = hex::hex_string_to_byte_arr(&hex_str);
+
+        assert_eq!(result.is_ok(), true);
+        let byte_arr = result.unwrap();
+        assert_eq!(byte_arr.len(), 6);
+        assert_eq!(byte_arr[0], 0x0A);
+        assert_eq!(byte_arr[1], 0x1B);
+        assert_eq!(byte_arr[2], 0x2C);
+        assert_eq!(byte_arr[3], 0x3D);
+        assert_eq!(byte_arr[4], 0x4E);
+        assert_eq!(byte_arr[5], 0x5F);
+        ```
+
+        </br>
+
 
 ## How to run test
 

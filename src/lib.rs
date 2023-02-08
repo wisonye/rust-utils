@@ -189,6 +189,12 @@ mod lib_tests {
                 &format!("back_to_hex_str: {back_to_hex_str}"),
             );
             assert_eq!(back_to_hex_str, "0A1B2C3D4E5F");
+
+            let bad_hex_str = "012";
+            let bad_result = hex::hex_string_to_byte_arr(&bad_hex_str);
+            assert_eq!(bad_result.is_err(), true);
+            let fail_reason = bad_result.err().unwrap();
+            assert_eq!(fail_reason, "\"hex_string\" length must be even numeric.");
         }
     }
 }
