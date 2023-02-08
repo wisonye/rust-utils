@@ -1,7 +1,7 @@
 ///
 /// Convert hex (byte array) into a String
 ///
-pub fn hex_to_string(byte_arr: &[u8], splitter: Option<char>) -> String {
+pub fn byte_arr_to_hex_string(byte_arr: &[u8], splitter: Option<char>) -> String {
     let mut hex_string = String::with_capacity(byte_arr.len() * 2);
     // println!(">>> hex_string len: {}", hex_string.capacity());
     for (index, temp_byte) in byte_arr.iter().enumerate() {
@@ -23,34 +23,48 @@ pub fn hex_to_string(byte_arr: &[u8], splitter: Option<char>) -> String {
  */
 
 ///
+///
+///
+fn char_to_u8(c: char) -> u8 {
+    // 0~9 (48 ~ 57)
+    match c as u8 {
+        48..=57 => c as u8 - 48,
+        65..=70 => c as u8 - 55,
+        97..=102 => c as u8 - 87,
+        _ => 0,
+    }
+}
+
+///
 /// Convert a hex String into byte array
 ///
-pub fn string_to_hex(hex_string: &str) -> Result<Vec<u8>, String> {
+pub fn hex_string_to_byte_arr(hex_string: &str) -> Result<Vec<u8>, String> {
     if hex_string.len() % 2 != 0 {
-        return Err(String::from(
-            "\"hex_string\" must have even numeric length.",
-        ));
+        return Err(String::from("\"hex_string\" length must be even numeric."));
     }
+
     // Create a vector to store the result
-    let mut byte_array: Vec<u8> = Vec::new();
-    // Create a temp string with 2 char capacity
-    let mut temp_hex_string = String::with_capacity(2);
+    let mut byte_array: Vec<u8> = Vec::with_capacity(hex_string.len() / 2);
+
+    // Create a temp array to hold every 2 chars
+    let mut temp_hex_chars: [char; 2] = ['0'; 2];
+    let mut push_index = 0;
+
     for temp_char in hex_string.chars() {
-        // Put 2 char into the `temp_hex_string` and Convert the hex string into `u8`
-        temp_hex_string.push(temp_char);
-        if temp_hex_string.len() == 2 {
-            let temp_result = u8::from_str_radix(temp_hex_string.as_str(), 16);
-            if temp_result.is_err() {
-                return Err(format!(
-                    "\"hex_string\" has non hex value: {}",
-                    temp_hex_string.as_str()
-                ));
-            }
+        temp_hex_chars[push_index] = temp_char;
+        push_index += 1;
 
-            byte_array.push(temp_result.unwrap());
+        if push_index >= 2 {
+            let tens_digit = char_to_u8(temp_hex_chars[0]);
+            let digit = char_to_u8(temp_hex_chars[1]);
 
-            // Clear the `temp_hex_string` for the next round
-            temp_hex_string.clear();
+            println!("\n>>> tens_digit: {tens_digit}, digit: {digit}");
+
+            let temp_u8 = tens_digit * 16 + digit;
+            byte_array.push(temp_u8);
+
+            // Reset `push_index` for the next round
+            push_index = 0;
         }
     }
 
@@ -74,4 +88,40 @@ pub fn hex_to_be_u32(byte_array: &[u8]) -> u32 {
     let temp_buffer = [byte_array[0], byte_array[1], byte_array[2], byte_array[3]];
 
     u32::from_be_bytes(temp_buffer)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_char_to_u8() {
+        assert_eq!(char_to_u8('0'), 0);
+        assert_eq!(char_to_u8('1'), 1);
+        assert_eq!(char_to_u8('2'), 2);
+        assert_eq!(char_to_u8('3'), 3);
+        assert_eq!(char_to_u8('4'), 4);
+        assert_eq!(char_to_u8('5'), 5);
+        assert_eq!(char_to_u8('6'), 6);
+        assert_eq!(char_to_u8('7'), 7);
+        assert_eq!(char_to_u8('8'), 8);
+        assert_eq!(char_to_u8('9'), 9);
+
+        assert_eq!(char_to_u8('a'), 10);
+        assert_eq!(char_to_u8('b'), 11);
+        assert_eq!(char_to_u8('c'), 12);
+        assert_eq!(char_to_u8('d'), 13);
+        assert_eq!(char_to_u8('e'), 14);
+        assert_eq!(char_to_u8('f'), 15);
+
+        assert_eq!(char_to_u8('A'), 10);
+        assert_eq!(char_to_u8('B'), 11);
+        assert_eq!(char_to_u8('C'), 12);
+        assert_eq!(char_to_u8('D'), 13);
+        assert_eq!(char_to_u8('E'), 14);
+        assert_eq!(char_to_u8('F'), 15);
+
+        assert_eq!(char_to_u8('g'), 0);
+        assert_eq!(char_to_u8('G'), 0);
+    }
 }

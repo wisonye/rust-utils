@@ -127,33 +127,68 @@ mod lib_tests {
         const HEX_LOGGER_NAME: &'static str = "HexTests";
 
         #[test]
-        fn hex_to_string_should_work() {
+        fn byte_array_to_hex_string_should_work() {
             env::set_var("LOG_LEVEL", "debug");
             let log_level = LogLevel::get_config_from_env();
 
             let hex_arr = vec![0xAAu8, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF];
-            let hex_str = hex::hex_to_string(&hex_arr, None);
+            let hex_str = hex::byte_arr_to_hex_string(&hex_arr, None);
 
             debug_log(
                 log_level,
                 HEX_LOGGER_NAME,
-                "hex_to_string_should_work",
+                "byte_array_to_hex_string_should_work",
                 &format!("hex_str: {hex_str}"),
             );
 
             assert_eq!(hex_str.len(), 12);
             assert_eq!(hex_str, "AABBCCDDEEFF");
 
-            let hex_str_with_space = hex::hex_to_string(&hex_arr, Some(' '));
+            let hex_str_with_space = hex::byte_arr_to_hex_string(&hex_arr, Some(' '));
             debug_log(
                 log_level,
                 HEX_LOGGER_NAME,
-                "hex_to_string_should_work",
+                "byte_array_to_hex_string_should_work",
                 &format!(">>> hex_str_with_space: '{hex_str_with_space}'"),
             );
 
             assert_eq!(hex_str_with_space.len(), 12 + 5);
             assert_eq!(hex_str_with_space, "AA BB CC DD EE FF");
+        }
+
+        #[test]
+        fn hex_string_to_byte_array_should_work() {
+            env::set_var("LOG_LEVEL", "debug");
+            let log_level = LogLevel::get_config_from_env();
+
+            let hex_str = "0A1B2C3D4E5F";
+            let result = hex::hex_string_to_byte_arr(&hex_str);
+
+            debug_log(
+                log_level,
+                HEX_LOGGER_NAME,
+                "hex_string_to_byte_array_should_work",
+                &format!("result: {:?}", result),
+            );
+
+            assert_eq!(result.is_ok(), true);
+            let byte_arr = result.unwrap();
+            assert_eq!(byte_arr.len(), 6);
+            assert_eq!(byte_arr[0], 0x0A);
+            assert_eq!(byte_arr[1], 0x1B);
+            assert_eq!(byte_arr[2], 0x2C);
+            assert_eq!(byte_arr[3], 0x3D);
+            assert_eq!(byte_arr[4], 0x4E);
+            assert_eq!(byte_arr[5], 0x5F);
+
+            let back_to_hex_str = hex::byte_arr_to_hex_string(&byte_arr, None);
+            debug_log(
+                log_level,
+                HEX_LOGGER_NAME,
+                "hex_string_to_byte_array_should_work",
+                &format!("back_to_hex_str: {back_to_hex_str}"),
+            );
+            assert_eq!(back_to_hex_str, "0A1B2C3D4E5F");
         }
     }
 }
