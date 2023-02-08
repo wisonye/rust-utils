@@ -67,8 +67,11 @@ mod lib_tests {
     ///
     mod memory_tests {
 
+        use crate::utils::logger::{debug_log, LogLevel};
         use crate::utils::memory;
         use std::env;
+
+        const MEMORY_LOGGER_NAME: &'static str = "MemoryTests";
 
         #[derive(Debug)]
         struct Color {
@@ -90,6 +93,9 @@ mod lib_tests {
 
         #[test]
         fn should_get_memory_block_info() {
+            env::set_var("LOG_LEVEL", "debug");
+            let log_level = LogLevel::get_config_from_env();
+
             let color = Color {
                 red: 0xAA,
                 green: 0xBB,
@@ -97,10 +103,57 @@ mod lib_tests {
             };
 
             let memory_info = memory::get_memory_block_info(&color);
-            println!("{memory_info:#?}");
+
+            debug_log(
+                log_level,
+                MEMORY_LOGGER_NAME,
+                "should_get_memory_block_info",
+                &format!("{memory_info:#?}"),
+            );
 
             assert_eq!(memory_info.block_size, 3);
             assert_eq!(memory_info.block_hex, "AABBCC");
+        }
+    }
+
+    //
+    // Hex
+    //
+    mod hex_tests {
+        use crate::utils::hex;
+        use crate::utils::logger::{debug_log, LogLevel};
+        use std::env;
+
+        const HEX_LOGGER_NAME: &'static str = "HexTests";
+
+        #[test]
+        fn hex_to_string_should_work() {
+            env::set_var("LOG_LEVEL", "debug");
+            let log_level = LogLevel::get_config_from_env();
+
+            let hex_arr = vec![0xAAu8, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF];
+            let hex_str = hex::hex_to_string(&hex_arr, None);
+
+            debug_log(
+                log_level,
+                HEX_LOGGER_NAME,
+                "hex_to_string_should_work",
+                &format!("hex_str: {hex_str}"),
+            );
+
+            assert_eq!(hex_str.len(), 12);
+            assert_eq!(hex_str, "AABBCCDDEEFF");
+
+            let hex_str_with_space = hex::hex_to_string(&hex_arr, Some(' '));
+            debug_log(
+                log_level,
+                HEX_LOGGER_NAME,
+                "hex_to_string_should_work",
+                &format!(">>> hex_str_with_space: '{hex_str_with_space}'"),
+            );
+
+            assert_eq!(hex_str_with_space.len(), 12 + 5);
+            assert_eq!(hex_str_with_space, "AA BB CC DD EE FF");
         }
     }
 }
