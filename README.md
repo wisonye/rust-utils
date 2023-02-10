@@ -140,6 +140,116 @@ This is my personal `Rust` utilities which contains the following modules:
 
         </br>
 
+- `Bits`
+
+    Bits util, it provides the following functions:
+
+    - `print_bits`
+    - `get_bits`
+    - `is_bit_1`
+
+    </br>
+
+    Example
+
+    - Print bits
+
+        ```rust
+        env::set_var("LOG_LEVEL", "debug");
+        let log_level = LogLevel::get_config_from_env();
+
+        bits::print_bits::<u8>(&0x08u8);
+        bits::print_bits::<u16>(&0xABCDu16);
+        bits::print_bits::<u32>(&0x889Eu32);
+        bits::print_bits::<u32>(&0xFB56889Eu32);
+        bits::print_bits::<u64>(&0x1234C78AFB56889Eu64);
+
+        // [ "Bits" > "print_bits" ] - 0x08 bits: 00001000
+        // [ "Bits" > "print_bits" ] - 0xABCD bits: 1010101111001101
+        // [ "Bits" > "print_bits" ] - 0x0000889E bits: 00000000000000001000100010011110
+        // [ "Bits" > "print_bits" ] - 0xFB56889E bits: 11111011010101101000100010011110
+        // [ "Bits" > "print_bits" ] - 0x1234C78AFB56889E bits: 0001001000110100110001111000101011111011010101101000100010011110
+        ```
+
+        </br>
+
+    - Get bits
+
+        ```rust
+        env::set_var("LOG_LEVEL", "debug");
+        let log_level = LogLevel::get_config_from_env();
+
+        let u8_bits = bits::get_bits::<u8>(&0x08u8);
+        assert_eq!(u8_bits, "00001000");
+
+        let u16_bits = bits::get_bits::<u16>(&0xABCDu16);
+        assert_eq!(u16_bits, "1010101111001101");
+
+        let u32_bits = bits::get_bits::<u32>(&0x889Eu32);
+        assert_eq!(u32_bits, "00000000000000001000100010011110");
+
+        let u32_bits_2 = bits::get_bits::<u32>(&0xFB56889Eu32);
+        assert_eq!(u32_bits_2, "11111011010101101000100010011110");
+
+        let u64_bits = bits::get_bits::<u64>(&0x1234C78AFB56889Eu64);
+        assert_eq!(
+            u64_bits,
+            "0001001000110100110001111000101011111011010101101000100010011110"
+        );
+        ```
+
+        </br>
+
+    - Check whether the given bit is set (`1`) or not
+
+        ```rust
+        env::set_var("LOG_LEVEL", "debug");
+        let log_level = LogLevel::get_config_from_env();
+
+        let v: usize = 0xABCD;
+
+        debug_log(
+            log_level,
+            BITS_TEST_LOGGER_NAME,
+            "check_bit_should_work",
+            &format!("0x{:04X} bits: {:016b}", v, v),
+        );
+
+        for which_bit in 1..17 {
+            debug_log(
+                log_level,
+                BITS_TEST_LOGGER_NAME,
+                "check_bit_should_work",
+                &format!(
+                    "bit {:2} in '0x{:02X}' is 1?: {}",
+                    which_bit,
+                    v,
+                    bits::bit_is_1(v as usize, which_bit)
+                ),
+            );
+        }
+
+        // [ "BitsTest" > "check_bit_should_work" ] - 0xABCD bits: 1010101111001101
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  1 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  2 in '0xABCD' is 1?: false
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  3 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  4 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  5 in '0xABCD' is 1?: false
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  6 in '0xABCD' is 1?: false
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  7 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  8 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit  9 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit 10 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit 11 in '0xABCD' is 1?: false
+        // [ "BitsTest" > "check_bit_should_work" ] - bit 12 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit 13 in '0xABCD' is 1?: false
+        // [ "BitsTest" > "check_bit_should_work" ] - bit 14 in '0xABCD' is 1?: true
+        // [ "BitsTest" > "check_bit_should_work" ] - bit 15 in '0xABCD' is 1?: false
+        // [ "BitsTest" > "check_bit_should_work" ] - bit 16 in '0xABCD' is 1?: true
+        ```
+
+        </br>
+
 
 ## How to run test
 
