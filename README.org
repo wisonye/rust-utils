@@ -16,7 +16,7 @@ If =LOG_LEVEL= is not provided, treat it as LOG_LEVEL="ERROR".
 
 Example:
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::logger;
 
   logger::debug_log("Main", "main", format!("p: {p:?}").as_str());
@@ -49,7 +49,7 @@ Print the memory layout of the given variable.
 
 Example:
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::memory;
 
   let temp_u8 = 0x31u8;
@@ -118,7 +118,7 @@ Print the memory layout from the inner buffer of the given slice.
 
 Example:
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::memory;  
 
   #[derive(Debug, Clone)]
@@ -181,7 +181,7 @@ Example:
 
 *** Get back hex string from byte array:
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::{hex, logger};
 
   let hex_arr = vec![0xAAu8, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF];
@@ -206,7 +206,7 @@ Output:
 
 *** Get back byte array from hex string
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::hex;
 
   let hex_str = "0A1B2C3D4E5F";
@@ -236,7 +236,7 @@ Example
 
 *** Print bits
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::bits;
 
   bits::print_bits::<u8>(&0x08u8);
@@ -259,7 +259,7 @@ Output:
 
 *** Get bits
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::bits;
 
   let u8_bits = bits::get_bits::<u8>(&0x08u8);
@@ -284,7 +284,7 @@ Output:
 
 *** Check whether the given bit is set (`1`) or not
 
-#+BEGIN_SRC rust-ts
+#+BEGIN_SRC rust
   use rust_utils::utils::{bits, logger};
 
   let v: usize = 0xABCD;
