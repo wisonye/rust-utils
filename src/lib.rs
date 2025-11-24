@@ -1,5 +1,4 @@
-#![feature(pointer_byte_offsets)]
-mod utils;
+pub mod utils;
 
 #[cfg(test)]
 mod lib_tests {
