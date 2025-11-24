@@ -1,4 +1,4 @@
-use crate::utils::logger::{debug_log, LogLevel};
+use crate::utils::logger::debug_log;
 use std::fmt::{Binary, UpperHex};
 
 const LOGGER_NAME: &'static str = "Bits";

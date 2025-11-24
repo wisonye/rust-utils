@@ -15,15 +15,14 @@ pub fn byte_arr_to_hex_string(byte_arr: &[u8], splitter: Option<char>) -> String
     hex_string
 }
 
-/**
- * `char` and `u8 (byte)` are the same type, but sometimes you still need to do a type conversion explicitly like below:
- *
- * let is_same_byte = byte_to_check == ('A' as u8);
- * let is_same_byte = byte_to_check == b'A';
- */
-
 ///
+/// `char` and `u8 (byte)` are the same type, but sometimes you still need to do a type
+/// conversion explicitly like below:
 ///
+/// ```rust
+/// let is_same_byte = byte_to_check == ('A' as u8);
+/// let is_same_byte = byte_to_check == b'A';
+/// ```
 ///
 fn char_to_u8(c: char) -> u8 {
     // 0~9 (48 ~ 57)
@@ -58,7 +57,7 @@ pub fn hex_string_to_byte_arr(hex_string: &str) -> Result<Vec<u8>, String> {
             let tens_digit = char_to_u8(temp_hex_chars[0]);
             let digit = char_to_u8(temp_hex_chars[1]);
 
-            println!("\n>>> tens_digit: {tens_digit}, digit: {digit}");
+            // println!("\n>>> tens_digit: {tens_digit}, digit: {digit}");
 
             let temp_u8 = tens_digit * 16 + digit;
             byte_array.push(temp_u8);
