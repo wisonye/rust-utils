@@ -1,6 +1,6 @@
-use crate::utils::logger::{debug_log, LogLevel};
+use crate::utils::logger::debug_log;
 
-const LOGGER_NAME: &'static str = "Memory";
+const LOGGER_MODULE_NAME: &'static str = "Memory";
 
 use std::fmt::Write;
 
@@ -42,41 +42,45 @@ use std::fmt::Write;
 /// Example output:
 ///
 /// ```bash
-/// (D) [ print_memory ] 'temp_u8', size: 1
-/// (D) [ print_memory ] --
-/// (D) [ print_memory ] 31
-/// (D) [ print_memory ] --
+/// (D) [ Memory - print_memory ] 'temp_u8', size: 1
+/// (D) [ Memory - print_memory ] ------------------
+/// (D) [ Memory - print_memory ] 31
+/// (D) [ Memory - print_memory ] ------------------
 ///
-/// (D) [ print_memory ] 'temp_int', size: 4
-/// (D) [ print_memory ] --------
-/// (D) [ print_memory ] BBAA0000
-/// (D) [ print_memory ] --------
+/// (D) [ Memory - print_memory ] 'temp_int', size: 4
+/// (D) [ Memory - print_memory ] -------------------
+/// (D) [ Memory - print_memory ] BBAA0000
+/// (D) [ Memory - print_memory ] -------------------
 ///
-/// (D) [ print_memory ] 'temp_float', size: 4
-/// (D) [ print_memory ] --------
-/// (D) [ print_memory ] E544F642
-/// (D) [ print_memory ] --------
+/// (D) [ Memory - print_memory ] 'temp_float', size: 4
+/// (D) [ Memory - print_memory ] ---------------------
+/// (D) [ Memory - print_memory ] E544F642
+/// (D) [ Memory - print_memory ] ---------------------
 ///
-/// (D) [ print_memory ] 'p', size: 4
-/// (D) [ print_memory ] --------
-/// (D) [ print_memory ] AA00BB00
-/// (D) [ print_memory ] --------
+/// (D) [ Memory - print_memory ] 'p', size: 4
+/// (D) [ Memory - print_memory ] ------------
+/// (D) [ Memory - print_memory ] AA00BB00
+/// (D) [ Memory - print_memory ] ------------
 ///
-/// (D) [ print_memory ] 'me', size: 40
-/// (D) [ print_memory ] --------------------------------------------------------------------------------
-/// (D) [ print_memory ] FB52920E010000000300000000000000FE52920E010000000300000000000000FF00000000000000
-/// (D) [ print_memory ] --------------------------------------------------------------------------------
+/// (D) [ Memory - print_memory ] 'me', size: 40
+/// (D) [ Memory - print_memory ] --------------------------------------------------------------------------------
+/// (D) [ Memory - print_memory ] 4A39A3070100000003000000000000004D39A307010000000300000000000000FF00000000000000
+/// (D) [ Memory - print_memory ] --------------------------------------------------------------------------------
 /// ```
 ///
 pub fn print_memory<T>(v: &T, var_name: &str) {
-    const MY_LOGGER_PREFIX: &str = "[ print_memory ]";
+    const MY_LOGGER_FUNCTION_NAME: &str = "print_memory";
 
     let byte_size = core::mem::size_of_val(v);
     let title = format!("'{var_name}', size: {}", byte_size);
 
     // Use `String` as buffer (1KB init capacity)
     let mut buffer = String::with_capacity(1024);
-    write!(buffer, "{MY_LOGGER_PREFIX} {title}",).unwrap();
+    write!(buffer, "{title}",).unwrap();
+
+    //
+    // From the second print line, simulate the `debug_log` output format!!!
+    //
 
     //
     // hr
@@ -86,7 +90,11 @@ pub fn print_memory<T>(v: &T, var_name: &str) {
     if hr_len < min_hr_len {
         hr_len = min_hr_len;
     }
-    write!(buffer, "\n{MY_LOGGER_PREFIX} ").unwrap();
+    write!(
+        buffer,
+        "\n(D) [ {LOGGER_MODULE_NAME} - {MY_LOGGER_FUNCTION_NAME} ] "
+    )
+    .unwrap();
     for _ in 0..hr_len {
         write!(buffer, "-").unwrap();
     }
@@ -96,7 +104,11 @@ pub fn print_memory<T>(v: &T, var_name: &str) {
     //
     let ptr = v as *const T as *const u8;
 
-    write!(buffer, "\n{MY_LOGGER_PREFIX} ").unwrap();
+    write!(
+        buffer,
+        "\n(D) [ {LOGGER_MODULE_NAME} - {MY_LOGGER_FUNCTION_NAME} ] "
+    )
+    .unwrap();
     for index in 0..byte_size {
         unsafe {
             write!(buffer, "{:02X}", *(ptr.wrapping_add(index))).unwrap();
@@ -106,14 +118,20 @@ pub fn print_memory<T>(v: &T, var_name: &str) {
     //
     // hr
     //
-    write!(buffer, "\n{MY_LOGGER_PREFIX} ").unwrap();
+    write!(
+        buffer,
+        "\n(D) [ {LOGGER_MODULE_NAME} - {MY_LOGGER_FUNCTION_NAME} ] "
+    )
+    .unwrap();
     for _ in 0..hr_len {
         write!(buffer, "-").unwrap();
     }
 
-    println!("\n{buffer}");
-}
+    // The final newline
+    write!(buffer, "\n").unwrap();
 
+    debug_log(LOGGER_MODULE_NAME, MY_LOGGER_FUNCTION_NAME, buffer.as_str())
+}
 
 ///
 /// Print the memory layout from the inner buffer of the given slice.
@@ -150,23 +168,23 @@ pub fn print_memory<T>(v: &T, var_name: &str) {
 /// Example output:
 ///
 /// ```bash
-/// [ print_memory_for_slice ] 'point_list slice', element byte size: 4, len: 5
-/// [ print_memory_for_slice ] ------------------------------------------------
-/// [ print_memory_for_slice ] 11002200|33004400|55006600|77008800|BBAADDCC
-/// [ print_memory_for_slice ] ------------------------------------------------
+/// (D) [ Memory - print_memory ] 'point_list slice', element byte size: 4, len: 5
+/// (D) [ Memory - print_memory ] ------------------------------------------------
+/// (D) [ Memory - print_memory ] 11002200|33004400|55006600|77008800|BBAADDCC
+/// (D) [ Memory - print_memory ] ------------------------------------------------
 ///
-/// [ print_memory_for_slice ] 'temp_arr slice', element byte size: 8, len: 3
-/// [ print_memory_for_slice ] --------------------------------------------------
-/// [ print_memory_for_slice ] AA00000000000000|BB00000000000000|CC00000000000000
-/// [ print_memory_for_slice ] --------------------------------------------------
+/// (D) [ Memory - print_memory ] 'temp_arr slice', element byte size: 8, len: 3
+/// (D) [ Memory - print_memory ] --------------------------------------------------
+/// (D) [ Memory - print_memory ] AA00000000000000|BB00000000000000|CC00000000000000
+/// (D) [ Memory - print_memory ] --------------------------------------------------
 ///
-/// [ print_memory_for_slice ] 'my_name slice', element byte size: 1, len: 9
-/// [ print_memory_for_slice ] ---------------------------------------------
-/// [ print_memory_for_slice ] 31|32|33|34|35|36|37|38|39
-/// [ print_memory_for_slice ] ---------------------------------------------
+/// (D) [ Memory - print_memory ] 'my_name slice', element byte size: 1, len: 9
+/// (D) [ Memory - print_memory ] ---------------------------------------------
+/// (D) [ Memory - print_memory ] 31|32|33|34|35|36|37|38|39
+/// (D) [ Memory - print_memory ] ---------------------------------------------
 /// ```
 pub fn print_memory_for_slice<T>(slice: &[T], var_name: &str) {
-    const MY_LOGGER_PREFIX: &str = "[ print_memory_for_slice ]";
+    const MY_LOGGER_FUNCTION_NAME: &str = "print_memory";
 
     let length = slice.len();
     let element_byte_size = core::mem::size_of::<T>();
@@ -178,7 +196,11 @@ pub fn print_memory_for_slice<T>(slice: &[T], var_name: &str) {
 
     // Use `String` as buffer (1KB init capacity)
     let mut buffer = String::with_capacity(1024);
-    write!(buffer, "{MY_LOGGER_PREFIX} {title}",).unwrap();
+    write!(buffer, "{title}",).unwrap();
+
+    //
+    // From the second print line, simulate the `debug_log` output format!!!
+    //
 
     //
     // hr
@@ -189,7 +211,11 @@ pub fn print_memory_for_slice<T>(slice: &[T], var_name: &str) {
     if hr_len < min_hr_len {
         hr_len = min_hr_len;
     }
-    write!(buffer, "\n{MY_LOGGER_PREFIX} ").unwrap();
+    write!(
+        buffer,
+        "\n(D) [ {LOGGER_MODULE_NAME} - {MY_LOGGER_FUNCTION_NAME} ] "
+    )
+    .unwrap();
     for _ in 0..hr_len {
         write!(buffer, "-").unwrap();
     }
@@ -200,7 +226,11 @@ pub fn print_memory_for_slice<T>(slice: &[T], var_name: &str) {
     //
     let ptr = slice.as_ptr() as *const u8;
 
-    write!(buffer, "\n{MY_LOGGER_PREFIX} ").unwrap();
+    write!(
+        buffer,
+        "\n(D) [ {LOGGER_MODULE_NAME} - {MY_LOGGER_FUNCTION_NAME} ] "
+    )
+    .unwrap();
     let mut wrote_bytes = 0;
     let mut draw_elements = 0;
     for index in 0..total_mem_byte_size {
@@ -223,10 +253,17 @@ pub fn print_memory_for_slice<T>(slice: &[T], var_name: &str) {
     //
     // hr
     //
-    write!(buffer, "\n{MY_LOGGER_PREFIX} ").unwrap();
+    write!(
+        buffer,
+        "\n(D) [ {LOGGER_MODULE_NAME} - {MY_LOGGER_FUNCTION_NAME} ] "
+    )
+    .unwrap();
     for _ in 0..hr_len {
         write!(buffer, "-").unwrap();
     }
 
-    println!("\n{buffer}");
+    // The final newline
+    write!(buffer, "\n").unwrap();
+
+    debug_log(LOGGER_MODULE_NAME, MY_LOGGER_FUNCTION_NAME, buffer.as_str())
 }

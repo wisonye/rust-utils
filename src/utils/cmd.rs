@@ -20,7 +20,7 @@ pub enum ExecuteCommandResult {
 /// Example:
 ///
 /// ```rust
-/// use rust_utils::utils::{cmd, memory};
+/// use rust_utils::utils::{cmd, logger};
 ///
 /// match cmd::execute_command(vec!["ls", "-lht", "./"]) {
 ///     cmd::ExecuteCommandResult::Success {
@@ -28,11 +28,12 @@ pub enum ExecuteCommandResult {
 ///         exit_code,
 ///         output,
 ///     } => {
-///         println!(
-///             "{}",
+///         logger::debug_log(
+///             "Main",
+///             "main",
 ///             std::format!(
 ///                 concat!(
-///                     "\n>>> Succeeded in executing the command with the result {{",
+///                     "Succeeded in executing the command with the result: {{",
 ///                     "\n\tcmd_desc: {}",
 ///                     "\n\texit_code: {:?}",
 ///                     "\n}}, output:\n\n{}",
@@ -41,10 +42,15 @@ pub enum ExecuteCommandResult {
 ///                 exit_code,
 ///                 output
 ///             )
+///             .as_str(),
 ///         );
 ///     }
 ///     cmd::ExecuteCommandResult::Fail { error_message } => {
-///         println!(">>> Faild to execute command with error: {error_message}");
+///         logger::error_log(
+///             "Main",
+///             "main",
+///             std::format!("Faild to execute command with error: {error_message}").as_str(),
+///         );
 ///     }
 /// }
 /// ```
