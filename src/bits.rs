@@ -1,6 +1,11 @@
-use crate::utils::logger::debug_log;
+use crate::debug_log;
+
+#[cfg(not(feature = "DISABLE_DEBUG_LOG"))]
+use crate::logger::{LogLevel, log};
+
 use std::fmt::{Binary, UpperHex};
 
+#[cfg(not(feature = "DISABLE_DEBUG_LOG"))]
 const LOGGER_NAME: &'static str = "Bits";
 
 ///
@@ -10,29 +15,31 @@ pub fn print_bits<T: Binary + UpperHex>(v: &T) {
     let type_name = std::any::type_name::<T>();
 
     if type_name == "u8" {
-        debug_log(
+        debug_log!(
             LOGGER_NAME,
             "print_bits",
-            &format!("0x{:02X} bits: {:08b}", v, v),
+            &format!("0x{:02X} bits: {:08b}", v, v)
         );
     } else if type_name == "u16" {
-        debug_log(
+        debug_log!(
             LOGGER_NAME,
             "print_bits",
-            &format!("0x{:04X} bits: {:016b}", v, v),
+            &format!("0x{:04X} bits: {:016b}", v, v)
         );
     } else if type_name == "u32" {
-        debug_log(
+        debug_log!(
             LOGGER_NAME,
             "print_bits",
-            &format!("0x{:08X} bits: {:032b}", v, v),
+            &format!("0x{:08X} bits: {:032b}", v, v)
         );
-    } else if type_name == "u64" {
-        debug_log(
+    } else if type_name == "u64" || type_name == "usize" {
+        debug_log!(
             LOGGER_NAME,
             "print_bits",
-            &format!("0x{:016X} bits: {:064b}", v, v),
+            &format!("0x{:016X} bits: {:064b}", v, v)
         );
+    } else {
+        let _ = v;
     }
 }
 

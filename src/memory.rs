@@ -1,4 +1,7 @@
-use crate::utils::logger::debug_log;
+use crate::debug_log;
+
+#[cfg(not(feature = "DISABLE_DEBUG_LOG"))]
+use crate::logger::{log, LogLevel};
 
 const LOGGER_MODULE_NAME: &'static str = "Memory";
 
@@ -130,7 +133,7 @@ pub fn print_memory<T>(v: &T, var_name: &str) {
     // The final newline
     write!(buffer, "\n").unwrap();
 
-    debug_log(LOGGER_MODULE_NAME, MY_LOGGER_FUNCTION_NAME, buffer.as_str())
+    debug_log!(LOGGER_MODULE_NAME, MY_LOGGER_FUNCTION_NAME, buffer.as_str());
 }
 
 ///
@@ -265,5 +268,5 @@ pub fn print_memory_for_slice<T>(slice: &[T], var_name: &str) {
     // The final newline
     write!(buffer, "\n").unwrap();
 
-    debug_log(LOGGER_MODULE_NAME, MY_LOGGER_FUNCTION_NAME, buffer.as_str())
+    debug_log!(LOGGER_MODULE_NAME, MY_LOGGER_FUNCTION_NAME, buffer.as_str());
 }

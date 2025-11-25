@@ -97,7 +97,7 @@ impl LogLevel {
 ///
 ///
 ///
-fn log(log_level_to_check: LogLevel, module_name: &str, function_name: &str, message: &str) {
+pub fn log(log_level_to_check: LogLevel, module_name: &str, function_name: &str, message: &str) {
     let enable_log = *LogLevel::get_config_from_env() as u8 <= log_level_to_check as u8;
 
     if !enable_log {
@@ -124,22 +124,46 @@ fn log(log_level_to_check: LogLevel, module_name: &str, function_name: &str, mes
     }
 }
 
-/// Debug log
-pub fn debug_log(module_name: &str, function_name: &str, message: &str) {
-    log(LogLevel::DEBUG, module_name, function_name, message);
+//
+// Debug log
+//
+#[macro_export]
+#[cfg(not(feature = "DISABLE_DEBUG_LOG"))]
+macro_rules! debug_log {
+    ($module_name:expr, $function_name:expr, $message:expr) => {
+        log(LogLevel::DEBUG, $module_name, $function_name, $message)
+    };
+}
+
+//
+// Debug log: expand to nothing if `DISABLE_DEBUG_LOG` feature is disabled
+//
+#[macro_export]
+#[cfg(feature = "DISABLE_DEBUG_LOG")]
+macro_rules! debug_log {
+    ($module_name:expr, $function_name:expr, $message:expr) => {};
 }
 
 /// Info log
-pub fn info_log(module_name: &str, function_name: &str, message: &str) {
-    log(LogLevel::INFO, module_name, function_name, message);
+#[macro_export]
+macro_rules! info_log {
+    ($module_name:expr, $function_name:expr, $message:expr) => {
+        log(LogLevel::INFO, $module_name, $function_name, $message)
+    };
 }
 
 /// Warning log
-pub fn warn_log(module_name: &str, function_name: &str, message: &str) {
-    log(LogLevel::WARN, module_name, function_name, message);
+#[macro_export]
+macro_rules! warn_log {
+    ($module_name:expr, $function_name:expr, $message:expr) => {
+        log(LogLevel::WARN, $module_name, $function_name, $message)
+    };
 }
 
 /// Error log
-pub fn error_log(module_name: &str, function_name: &str, message: &str) {
-    log(LogLevel::ERROR, module_name, function_name, message);
+#[macro_export]
+macro_rules! error_log {
+    ($module_name:expr, $function_name:expr, $message:expr) => {
+        log(LogLevel::ERROR, $module_name, $function_name, $message)
+    };
 }

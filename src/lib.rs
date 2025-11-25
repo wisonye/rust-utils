@@ -1,4 +1,8 @@
-pub mod utils;
+pub mod bits;
+pub mod cmd;
+pub mod hex;
+pub mod logger;
+pub mod memory;
 
 #[cfg(test)]
 mod lib_tests {
@@ -7,8 +11,11 @@ mod lib_tests {
     // Hex
     //
     mod hex_tests {
-        use crate::utils::hex;
-        use crate::utils::logger::debug_log;
+        use crate::debug_log;
+        use crate::{
+            hex,
+            logger::{LogLevel, log},
+        };
 
         const HEX_LOGGER_NAME: &'static str = "HexTests";
 
@@ -17,20 +24,20 @@ mod lib_tests {
             let hex_arr = vec![0xAAu8, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF];
             let hex_str = hex::byte_arr_to_hex_string(&hex_arr, None);
 
-            debug_log(
+            debug_log!(
                 HEX_LOGGER_NAME,
                 "byte_array_to_hex_string_should_work",
-                &format!("hex_str: {hex_str}"),
+                &format!("hex_str: {hex_str}")
             );
 
             assert_eq!(hex_str.len(), 12);
             assert_eq!(hex_str, "AABBCCDDEEFF");
 
             let hex_str_with_space = hex::byte_arr_to_hex_string(&hex_arr, Some(' '));
-            debug_log(
+            debug_log!(
                 HEX_LOGGER_NAME,
                 "byte_array_to_hex_string_should_work",
-                &format!(">>> hex_str_with_space: '{hex_str_with_space}'"),
+                &format!(">>> hex_str_with_space: '{hex_str_with_space}'")
             );
 
             assert_eq!(hex_str_with_space.len(), 12 + 5);
@@ -42,10 +49,10 @@ mod lib_tests {
             let hex_str = "0A1B2C3D4E5F";
             let result = hex::hex_string_to_byte_arr(&hex_str);
 
-            debug_log(
+            debug_log!(
                 HEX_LOGGER_NAME,
                 "hex_string_to_byte_array_should_work",
-                &format!("result: {:?}", result),
+                &format!("result: {:?}", result)
             );
 
             assert_eq!(result.is_ok(), true);
@@ -59,10 +66,10 @@ mod lib_tests {
             assert_eq!(byte_arr[5], 0x5F);
 
             let back_to_hex_str = hex::byte_arr_to_hex_string(&byte_arr, None);
-            debug_log(
+            debug_log!(
                 HEX_LOGGER_NAME,
                 "hex_string_to_byte_array_should_work",
-                &format!("back_to_hex_str: {back_to_hex_str}"),
+                &format!("back_to_hex_str: {back_to_hex_str}")
             );
             assert_eq!(back_to_hex_str, "0A1B2C3D4E5F");
 
@@ -78,7 +85,7 @@ mod lib_tests {
     // Bits
     //
     mod bits_tests {
-        use crate::utils::{bits, logger::debug_log};
+        use crate::{bits, debug_log, logger::{log, LogLevel}};
 
         const BITS_TEST_LOGGER_NAME: &'static str = "BitsTest";
 
@@ -116,14 +123,14 @@ mod lib_tests {
         fn check_bit_should_work() {
             let v: usize = 0xABCD;
 
-            debug_log(
+            debug_log!(
                 BITS_TEST_LOGGER_NAME,
                 "check_bit_should_work",
-                &format!("0x{:04X} bits: {:016b}", v, v),
+                &format!("0x{:04X} bits: {:016b}", v, v)
             );
 
             for which_bit in 1..17 {
-                debug_log(
+                debug_log!(
                     BITS_TEST_LOGGER_NAME,
                     "check_bit_should_work",
                     &format!(
@@ -131,7 +138,7 @@ mod lib_tests {
                         which_bit,
                         v,
                         bits::bit_is_1(v as usize, which_bit)
-                    ),
+                    )
                 );
             }
         }
