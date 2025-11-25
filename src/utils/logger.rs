@@ -32,6 +32,7 @@
 //! ```
 //!
 use std::env;
+use std::sync::OnceLock;
 
 //
 // ANSI color escape contants
@@ -41,9 +42,11 @@ const LOG_COLOR_YELLOW: &'static str = "\x1b[1;33m";
 const LOG_COLOR_RED: &'static str = "\x1b[1;31m";
 const LOG_COLOR_RESET: &'static str = "\x1b[0m";
 
-///
-///
-///
+//
+// Static global log level loads from env var: `LOG_LEVEL`
+//
+static ENV_LOG_LEVEL: OnceLock<LogLevel> = OnceLock::new();
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum LogLevel {
     DEBUG = 1,
@@ -53,20 +56,25 @@ pub enum LogLevel {
 }
 
 impl LogLevel {
-    fn get_config_from_env() -> Self {
-        let log_level_from_env_str = match env::var("LOG_LEVEL") {
-            Ok(level) => level,
-            Err(_) => String::from("ERROR"),
-        };
+    fn get_config_from_env() -> &'static Self {
+        //
+        // `OnceLock<LogLevel>.get_or_init()` guarantees that only loads once!!!
+        //
+        ENV_LOG_LEVEL.get_or_init(|| {
+            let log_level_from_env_str = match env::var("LOG_LEVEL") {
+                Ok(level) => level,
+                Err(_) => String::from("ERROR"),
+            };
 
-        // println!(">>> log_level_from_env_str: {log_level_from_env_str}");
-        match log_level_from_env_str.to_uppercase().as_str() {
-            "DEBUG" => LogLevel::DEBUG,
-            "INFO" => LogLevel::INFO,
-            "WARN" => LogLevel::WARN,
-            "ERROR" => LogLevel::ERROR,
-            _ => LogLevel::ERROR,
-        }
+            // println!(">>> log_level_from_env_str: {log_level_from_env_str}");
+            match log_level_from_env_str.to_uppercase().as_str() {
+                "DEBUG" => LogLevel::DEBUG,
+                "INFO" => LogLevel::INFO,
+                "WARN" => LogLevel::WARN,
+                "ERROR" => LogLevel::ERROR,
+                _ => LogLevel::ERROR,
+            }
+        })
     }
 
     fn is_logger_disable_color() -> bool {
@@ -90,7 +98,7 @@ impl LogLevel {
 ///
 ///
 fn log(log_level_to_check: LogLevel, module_name: &str, function_name: &str, message: &str) {
-    let enable_log = LogLevel::get_config_from_env() as u8 <= log_level_to_check as u8;
+    let enable_log = *LogLevel::get_config_from_env() as u8 <= log_level_to_check as u8;
 
     if !enable_log {
         return;
