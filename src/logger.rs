@@ -1,22 +1,32 @@
 //!
-//! This logger utility prints the log content based on the `LOG_LEVEL` env variable:
+//! # This logger macros print the log content based on the following settings:
+//!
+//! - The `LOG_LEVEL` and `LOGGER_DISABLE_COLOR` env variables
+//! - The `DISABLE_DEBUG_LOG` feature
+//!
+//! ## 1. The `LOG_LEVEL` and `LOGGER_DISABLE_COLOR` env variables
 //!
 //! `LOG_LEVEL="DEBUG"`: Print all function calls: debug_log/info_log/warn_log/error_log
 //! `LOG_LEVEL="INFO"` : Only print function calls: info_log/warn_log/error_log
 //! `LOG_LEVEL="WARN"` : Only print function calls: warn_log/error_log
 //! `LOG_LEVEL="ERROR"`: Only print function calls: error_log
 //!
-//! If `LOG_LEVEL` is not provided, treat it as LOG_LEVEL="ERROR".
+//! If `LOG_LEVEL` is not provided, treat it as `LOG_LEVEL="ERROR"`.
 //!
 //! Example:
 //!
 //! ```rust
-//! use rust_utils::utils::logger;
+//! use rust_utils::{debug_log, info_log, warn_log, error_log};
+//! use rust_utils::logger::{log, LogLevel};
 //!
-//! logger::debug_log("Main", "main", format!("p: {p:?}").as_str());
-//! logger::info_log("Main", "main", format!("p: {p:?}").as_str());
-//! logger::warn_log("Main", "main", format!("p: {p:?}").as_str());
-//! logger::error_log("Main", "main", format!("p: {p:?}").as_str());
+//! const LOGGER_PREFIX: &'static str = "TempMain";
+//!
+//! fn main() {
+//!     debug_log!(LOGGER_PREFIX, "main", "hello from RUST:)");
+//!     info_log!(LOGGER_PREFIX,  "main", "hello from RUST:)");
+//!     warn_log!(LOGGER_PREFIX,  "main", "hello from RUST:)");
+//!     error_log!(LOGGER_PREFIX, "main", "hello from RUST:)");
+//! }
 //! ```
 //!
 //! Now, you can run like this:
@@ -30,6 +40,50 @@
 //! ```bash
 //! LOGGER_DISABLE_COLOR="TRUE" LOG_LEVEL="DEBUG" cargo run
 //! ```
+//!
+//! It's very useful when you run `cargo run` inside your editor.
+//!
+//! Example output:
+//!
+//! ```bash
+//! (D) [ TempMain - main ] hello from RUST:)
+//! (I) [ TempMain - main ] hello from RUST:)
+//! (W) [ TempMain - main ] hello from RUST:)
+//! (E) [ TempMain - main ] hello from RUST:)
+//! ```
+//!
+//!
+//! ## 2. The `DISABLE_DEBUG_LOG` feature
+//!
+//! If you want to disable (DO NOT compile) all `debug_log!` macro (e.g. in release build),
+//! you can re-export `rust-utils`'s feature into your crate by adding the following settings
+//! to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! rust_utils = { path = "../rust-utils" }
+//!
+//! [features]
+//! #
+//! # Re-export `rust-utils`'s feature into current crate
+//! #
+//! disable-debug-log = ["rust_utils/DISABLE_DEBUG_LOG"]
+//! ```
+//!
+//! Then, run or build the project like this:
+//!
+//! ```bash
+//! # Build and run
+//! LOG_LEVEL="DEBUG" cargo run --features disable-debug-log
+//!
+//! # Debug build
+//! cargo build --features disable-debug-log
+//!
+//! # Relase build
+//! cargo build --release --features disable-debug-log
+//! ```
+//!
+//! After re-compiling, all `debug_log!` expands to an empty block `{}`.
 //!
 use std::env;
 use std::sync::OnceLock;
