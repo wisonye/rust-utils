@@ -6,10 +6,10 @@
 //!
 //! ## 1. The `LOG_LEVEL` and `LOGGER_DISABLE_COLOR` env variables
 //!
-//! `LOG_LEVEL="DEBUG"`: Print all function calls: debug_log/info_log/warn_log/error_log
-//! `LOG_LEVEL="INFO"` : Only print function calls: info_log/warn_log/error_log
-//! `LOG_LEVEL="WARN"` : Only print function calls: warn_log/error_log
-//! `LOG_LEVEL="ERROR"`: Only print function calls: error_log
+//! `LOG_LEVEL="DEBUG"`: Print all macros: debug_log/info_log/warn_log/error_log
+//! `LOG_LEVEL="INFO"` : Only print for macros: info_log/warn_log/error_log
+//! `LOG_LEVEL="WARN"` : Only print for macros: warn_log/error_log
+//! `LOG_LEVEL="ERROR"`: Only print for macros: error_log
 //!
 //! If `LOG_LEVEL` is not provided, treat it as `LOG_LEVEL="ERROR"`.
 //!
@@ -35,7 +35,7 @@
 //! LOG_LEVEL="DEBUG" cargo run
 //! ```
 //!
-//! If you want, you can turn off the ANSI colour escape output like this:
+//! If you want, you can turn off the ANSI colour like this:
 //!
 //! ```bash
 //! LOGGER_DISABLE_COLOR="TRUE" LOG_LEVEL="DEBUG" cargo run
@@ -55,7 +55,7 @@
 //!
 //! ## 2. The `DISABLE_DEBUG_LOG` feature
 //!
-//! If you want to disable (DO NOT compile) all `debug_log!` macro (e.g. in release build),
+//! If you want to disable (DO NOT compile) all `debug_log!` macro (e.g. in a release build),
 //! you can re-export `rust-utils`'s feature into your crate by adding the following settings
 //! to your `Cargo.toml`:
 //!
@@ -74,7 +74,7 @@
 //!
 //! ```bash
 //! # Build and run
-//! LOG_LEVEL="DEBUG" cargo run --features disable-debug-log
+//! LOG_LEVEL="INFO" cargo run --features disable-debug-log
 //!
 //! # Debug build
 //! cargo build --features disable-debug-log
@@ -83,7 +83,7 @@
 //! cargo build --release --features disable-debug-log
 //! ```
 //!
-//! After re-compiling, all `debug_log!` expands to an empty block `{}`.
+//! After re-compiling, all `debug_log!` macros expand to an empty block `{}`.
 //!
 use std::env;
 use std::sync::OnceLock;
